@@ -12,8 +12,8 @@ Unlike standard LZ77 compression, which replaces duplicates with pointers (e.g.,
 
 To test if a pattern exists in the original stream, the lookup algorithm performs a greedy decomposition:
 1. It searches the skeleton for the longest valid prefix of the query pattern.
-2. If a matching prefix $\ge$ `min_match` is found, it is removed from the query, and the process repeats for the remainder.
-3. If the remaining fragment is $< \text{min\_match}$, it is checked as an exact literal substring within the skeleton.
+2. If a matching prefix `>= min_match` is found, it is removed from the query, and the process repeats for the remainder.
+3. If the remaining fragment is `< min_match`, it is checked as an exact literal substring within the skeleton.
 4. If the query pattern can be fully decomposed into chunks existing in the skeleton, the filter returns `FOUND`.
 
 ## Trade-offs vs. Bloom Filter
@@ -41,7 +41,7 @@ The Permyakov Filter uses adaptive compression: it lowers `min_match` until the 
 **Key Observations:**
 1.  **Bloom Filter Failure:** At memory budgets under 10 KB for 1 MB of redundant data, the Bloom filter saturates heavily, producing near 100% False Positives.
 2.  **Permyakov Filter Perfect Accuracy:** When `min_match` is set aggressively low (e.g., 4 bytes), the lookup algorithm can reassemble boundary-crossing patterns from smaller atomic dictionary fragments. This drops the False Negative Rate to **0%** while maintaining **0%** False Positives.
-3.  **Adaptive Tuning:** If `min_match` is set too high relative to the query length (e.g., 32), boundary reconstruction fails, introducing False Negatives. The key to the Permyakov Filter is ensuring $min\_match \ll P$.
+3.  **Adaptive Tuning:** If `min_match` is set too high relative to the query length (e.g., 32), boundary reconstruction fails, introducing False Negatives. The key to the Permyakov Filter is ensuring `min_match << P`.
 
 ## Conclusion
 
